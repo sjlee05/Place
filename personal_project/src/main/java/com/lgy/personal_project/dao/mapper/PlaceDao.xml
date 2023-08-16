@@ -1,0 +1,42 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lgy.personal_project.dao.PlaceDao">
+
+    <select id="list" parameterType="hashmap" resultType="com.lgy.personal_project.dto.PlaceDto" >
+			    SELECT pno, title, content, address, imgPath
+			    FROM place 
+			    <if test="cate != null">
+  				  WHERE cate = #{cate}
+ 				</if>
+			    order by pno desc
+    </select>
+    
+    <insert id="write" parameterType="hashmap">
+   	 	insert into place(pno, title, content, address, imgPath, cate, lat, lon) values
+   	 					((select nvl(max(pno)+1,1) from place), #{title} ,#{content},#{address}
+   	 					, #{imgPath}, #{cate}, #{lat, jdbcType=VARCHAR}, #{lon, jdbcType=VARCHAR})
+    </insert>
+    <select id="contentView" parameterType="hashmap" resultType="com.lgy.personal_project.dto.PlaceDto">
+		select * from place where pno = ${pno}
+    </select>
+ 
+	<update id="modify" parameterType="hashmap">
+	        update place set title = #{title},
+	        content = #{content},
+	        address = #{address},
+		   <if test="imgPath != null">
+  			 imgPath = #{imgPath},
+ 		  </if>
+	        cate = #{cate},
+	        lat = #{lat, jdbcType=VARCHAR},
+	        lon = #{lon, jdbcType=VARCHAR}
+			where pno = #{pno}
+	</update>
+    
+    <delete id="delete" parameterType="hashmap">
+   	 	delete from place where pno=#{pno}
+    </delete>
+      
+</mapper>
